@@ -4,11 +4,9 @@ import { uuid } from '../../shared/lib/uuid';
 import { GithubService } from './github.service';
 
 const SUPPORTED_VIDEO_FILE_TYPES = ['mp4', 'mov'];
+const SUPPORTED_IMAGE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
 export const SUPPORTED_FILE_TYPES = [
   'gif',
-  'jpeg',
-  'jpg',
-  'png',
   'docx',
   'gz',
   'log',
@@ -17,7 +15,8 @@ export const SUPPORTED_FILE_TYPES = [
   'txt',
   'xlsx',
   'zip',
-  ...SUPPORTED_VIDEO_FILE_TYPES
+  ...SUPPORTED_VIDEO_FILE_TYPES,
+  ...SUPPORTED_IMAGE_FILE_TYPES
 ];
 export const FILE_TYPE_SUPPORT_ERROR = "We don't support that file type." + ' Try again with ' + SUPPORTED_FILE_TYPES.join(', ') + '.';
 /**
@@ -67,5 +66,10 @@ export class UploadService {
   isSupportedFileType(fileName): boolean {
     const fileType = this.getFileExtension(fileName);
     return SUPPORTED_FILE_TYPES.includes(fileType.toLowerCase());
+  }
+
+  isImageFile(filename): boolean {
+    const fileType = this.getFileExtension(filename);
+    return SUPPORTED_IMAGE_FILE_TYPES.includes(fileType.toLowerCase());
   }
 }
