@@ -4,9 +4,8 @@ import { uuid } from '../../shared/lib/uuid';
 import { GithubService } from './github.service';
 
 const SUPPORTED_VIDEO_FILE_TYPES = ['mp4', 'mov'];
-const SUPPORTED_IMAGE_FILE_TYPES = ['jpeg', 'jpg', 'png'];
+const SUPPORTED_IMAGE_FILE_TYPES = ['jpeg', 'jpg', 'png', 'gif'];
 export const SUPPORTED_FILE_TYPES = [
-  'gif',
   'docx',
   'gz',
   'log',

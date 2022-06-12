@@ -1,6 +1,9 @@
 <h2 mat-dialog-title>Are you sure you want to upload {{ data.name }}?</h2>
 <div mat-dialog-content>
-  <img [src]="data.preview | async" alt="oh dearie me" />
+  <img *ngIf="data.preview; else elseBlock" [src]="data.preview | async" alt="Unable to show image preview" />
+  <ng-template #elseBlock>
+    <p>No preview available</p>
+  </ng-template>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Cancel</button>

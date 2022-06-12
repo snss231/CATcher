@@ -32,19 +32,16 @@ export class DialogService {
   }
 
   openUploadConfirmationDialog(file: File) {
-    const preview = new Observable<string | ArrayBuffer>((observer) => {
-      if (this.uploadService.isImageFile(file.name)) {
+    let preview = undefined;
+    if (this.uploadService.isImageFile(file.name)) {
+      preview = new Observable<string | ArrayBuffer>((observer) => {
         const reader = new FileReader();
         reader.onload = () => {
           observer.next(reader.result);
         };
         reader.readAsDataURL(file);
-      } else {
-        observer.next(
-          'https://media.istockphoto.com/photos/european-short-haired-cat-picture-id1072769156?k=20&m=1072769156&s=612x612&w=0&h=k6eFXtE7bpEmR2ns5p3qe_KYh098CVLMz4iKm5OuO6Y='
-        );
-      }
-    });
+      });
+    }
     return this.dialog.open(UploadDialogComponent, {
       data: {
         name: file.name,
