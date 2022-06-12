@@ -1,7 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 import * as DOMPurify from 'dompurify';
+import { DialogService } from '../../core/services/dialog.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { FILE_TYPE_SUPPORT_ERROR, getSizeExceedErrorMsg, SUPPORTED_FILE_TYPES, UploadService } from '../../core/services/upload.service';
@@ -10,7 +12,6 @@ const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1024 * 1024;
 const SHOWN_MAX_UPLOAD_SIZE_MB = 10;
 const SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB = 5;
-const TIME_BETWEEN_UPLOADS_MS = 250;
 
 const MAX_UPLOAD_SIZE = (SHOWN_MAX_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 11MB to allow 10.x MB
 const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_MB; // 6MB to allow 5.x MB
@@ -23,7 +24,13 @@ const MAX_VIDEO_UPLOAD_SIZE = (SHOWN_MAX_VIDEO_UPLOAD_SIZE_MB + 1) * BYTES_PER_M
 export class CommentEditorComponent implements OnInit {
   readonly SUPPORTED_FILE_TYPES = SUPPORTED_FILE_TYPES;
 
-  constructor(private uploadService: UploadService, private errorHandlingService: ErrorHandlingService, private logger: LoggingService) {}
+  constructor(
+    private dialogService: DialogService,
+    private uploadService: UploadService,
+    private errorHandlingService: ErrorHandlingService,
+    private logger: LoggingService,
+    public dialog: MatDialog
+  ) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
@@ -111,11 +118,17 @@ export class CommentEditorComponent implements OnInit {
     this.commentTextArea.nativeElement.focus();
 
     for (let i = 0; i < files.length; i++) {
-      setTimeout(() => {
-        this.logger.info(`File ${i + 1} of ${files.length}. Begin uploading ${files[i].name}.`);
-        this.readAndUploadFile(files[i]);
-      }, TIME_BETWEEN_UPLOADS_MS * i);
+      this.openUploadConfirmation(files[i]);
     }
+  }
+
+  openUploadConfirmation(file) {
+    const dialogRef = this.dialogService.openUploadConfirmationDialog(file);
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.readAndUploadFile(file);
+      }
+    });
   }
 
   onDragExit(event) {
@@ -131,7 +144,7 @@ export class CommentEditorComponent implements OnInit {
 
     const files = fileInput.files;
     if (files.length > 0) {
-      this.readAndUploadFile(files[0]);
+      this.openUploadConfirmation(files[0]);
       fileInput.value = '';
     }
   }
@@ -202,7 +215,7 @@ export class CommentEditorComponent implements OnInit {
       }
     }
     if (blob) {
-      this.readAndUploadFile(blob);
+      this.openUploadConfirmation(blob);
     }
   }
 

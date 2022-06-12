@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs';
 import { LabelDefinitionPopupComponent } from '../../shared/label-definition-popup/label-definition-popup.component';
+import { UploadDialogComponent } from '../../shared/upload-dialog/upload-dialog.component';
 import { UserConfirmationComponent } from '../guards/user-confirmation/user-confirmation.component';
+import { UploadService } from './upload.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DialogService {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private uploadService: UploadService) {}
 
   openUserConfirmationModal(messages: string[], yesButtonMessage: string, noButtonMessage: string) {
     return this.dialog.open(UserConfirmationComponent, {
@@ -24,6 +27,25 @@ export class DialogService {
       data: {
         header: labelName,
         body: labelDefinition
+      }
+    });
+  }
+
+  openUploadConfirmationDialog(file: File) {
+    let preview;
+    if (this.uploadService.isImageFile(file.name)) {
+      preview = new Observable<string | ArrayBuffer>((observer) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          observer.next(reader.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    return this.dialog.open(UploadDialogComponent, {
+      data: {
+        name: file.name,
+        preview
       }
     });
   }

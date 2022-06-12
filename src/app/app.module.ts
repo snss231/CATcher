@@ -38,9 +38,17 @@ import { LabelDefinitionPopupComponent } from './shared/label-definition-popup/l
 import { HeaderComponent } from './shared/layout';
 import { markedOptionsFactory } from './shared/lib/marked';
 import { SharedModule } from './shared/shared.module';
+import { UploadDialogComponent } from './shared/upload-dialog/upload-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, UserConfirmationComponent, LabelDefinitionPopupComponent, SessionFixConfirmationComponent],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    UserConfirmationComponent,
+    LabelDefinitionPopupComponent,
+    SessionFixConfirmationComponent,
+    UploadDialogComponent
+  ],
   imports: [
     BrowserModule,
     PhaseTesterResponseModule,
@@ -95,7 +103,7 @@ import { SharedModule } from './shared/shared.module';
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [UserConfirmationComponent, SessionFixConfirmationComponent, LabelDefinitionPopupComponent]
+  entryComponents: [UploadDialogComponent, UserConfirmationComponent, SessionFixConfirmationComponent, LabelDefinitionPopupComponent]
 })
 export class AppModule {
   constructor(private apollo: Apollo, private httpLink: HttpLink, private authService: AuthService) {
