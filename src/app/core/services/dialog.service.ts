@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { UploadDialogComponent } from '../../shared/upload-dialog/upload-dialog.component';
+import { Observable } from 'rxjs';
 import { LabelDefinitionPopupComponent } from '../../shared/label-definition-popup/label-definition-popup.component';
+import { UploadDialogComponent } from '../../shared/upload-dialog/upload-dialog.component';
 import { UserConfirmationComponent } from '../guards/user-confirmation/user-confirmation.component';
 import { UploadService } from './upload.service';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,7 @@ export class DialogService {
   }
 
   openUploadConfirmationDialog(file: File) {
-    let preview = undefined;
+    let preview;
     if (this.uploadService.isImageFile(file.name)) {
       preview = new Observable<string | ArrayBuffer>((observer) => {
         const reader = new FileReader();
